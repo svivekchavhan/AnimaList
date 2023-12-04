@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal List</title>
+    <!-- Include Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+</head>
+
+<body class="font-sans bg-gray-200 p-8">
+
+    <h1 class="text-center text-gray-700">Animal List</h1>
+
+    <div id="search-filter" class="mb-8">
+        <label for="search" class="block text-gray-700">Search:</label>
+        <input type="text" id="search" oninput="filterAnimals()" placeholder="Enter animal name"
+            class="w-full border border-gray-400 rounded py-2 px-3">
+
+        <label for="filter" class="block mt-4 text-gray-700">Filter by color:</label>
+        <select id="filter" onchange="filterAnimals()"
+            class="w-full border border-gray-400 rounded py-2 px-3">
+            <option value="">All Colors</option>
+            <option value="Yellow">Yellow</option>
+            <option value="Gray">Gray</option>
+            <option value="Spotted">Spotted</option>
+            <!-- Add more color options as needed -->
+        </select>
+    </div>
+
+    <div id="animal-list"></div>
+
+    <script>
+        const animalArray = generateRandomAnimals(210);
+
+        function generateRandomAnimals(count) {
+            const names = ['Lion', 'Elephant', 'Giraffe', 'Kangaroo', 'Penguin', 'Zebra', 'Hippopotamus', /* Add more names */ ];
+            const colors = ['Yellow', 'Gray', 'Spotted', 'Brown', 'Black and White', 'Striped', /* Add more colors */ ];
+
+            const getRandomElement = (array) => array[Math.floor(Math.random() * array.length)];
+
+            const animals = [];
+            for (let i = 0; i < count; i++) {
+                const animal = {
+                    name: getRandomElement(names) + i,
+                    weight: Math.floor(Math.random() * 500) + 50,
+                    color: getRandomElement(colors),
+                };
+                animals.push(animal);
+            }
+
+            return animals;
+        }
+
+        const animalListContainer = document.getElementById('animal-list');
+        const searchInput = document.getElementById('search');
+        const filterSelect = document.getElementById('filter');
+
+        function filterAnimals() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filterColor = filterSelect.value.toLowerCase();
+
+            const filteredAnimals = animalArray.filter(animal => {
+                const nameMatches = animal.name.toLowerCase().includes(searchTerm);
+                const colorMatches = filterColor === '' || animal.color.toLowerCase() === filterColor;
+
+                return nameMatches && colorMatches;
+            });
+
+            displayAnimals(filteredAnimals);
+        }
+
+        function displayAnimals(animals) {
+            animalListContainer.innerHTML = '';
+
+            animals.forEach(animal => {
+                const animalCard = document.createElement('div');
+                animalCard.classList.add('border', 'border-gray-300', 'rounded', 'p-4', 'm-4', 'shadow-md');
+
+                const animalName = document.createElement('div');
+                animalName.classList.add('text-lg', 'text-gray-700');
+                animalName.textContent = animal.name;
+
+                const animalDetails = document.createElement('div');
+                animalDetails.classList.add('text-gray-500');
+                animalDetails.textContent = `Weight: ${animal.weight} kg, Color: ${animal.color}`;
+
+                animalCard.appendChild(animalName);
+                animalCard.appendChild(animalDetails);
+                animalListContainer.appendChild(animalCard);
+            });
+        }
+
+        // Initial display of all animals
+        displayAnimals(animalArray);
+    </script>
+
+</body>
+
+</html>
